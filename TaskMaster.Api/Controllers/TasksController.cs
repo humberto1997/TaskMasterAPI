@@ -39,4 +39,21 @@ public class TasksController : ControllerBase
             return BadRequest($"Error en el servidor: {ex.Message}");
         }
     }
+
+    // GET: api/Tasks/search/clase
+    [HttpGet("search/{title}")]
+    public async Task<ActionResult<IEnumerable<TodoTask>>> SearchTasks(string title)
+    {
+        // Usamos LINQ para filtrar en la base de datos
+        var tasks = await _context.Tasks
+            .Where(t => t.Title.Contains(title))
+            .ToListAsync();
+
+        if (tasks == null || !tasks.Any())
+        {
+            return NotFound($"No se encontraron tareas que contengan: {title}");
+        }
+
+        return Ok(tasks);
+    }
 }
